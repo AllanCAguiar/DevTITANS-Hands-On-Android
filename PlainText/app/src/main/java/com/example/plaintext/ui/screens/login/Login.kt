@@ -1,7 +1,6 @@
 package com.example.plaintext.ui.screens.login
 
-import android.util.Log
-import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,23 +53,138 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintext.R
-import com.example.plaintext.ui.viewmodel.PreferencesViewModel
-
-data class LoginState(
-    val preencher: Boolean,
-    val login: String,
-    val navigateToSettings: () -> Unit,
-    val navigateToList: (name: String) -> Unit,
-    val checkCredentials: (login: String, password: String) -> Boolean,
-)
+import com.example.plaintext.ui.theme.PlainTextTheme
+import com.example.plaintext.ui.viewmodel.LoginState
 
 @Composable
 fun Login_screen(
+    loginState: LoginState,
+    onLoginChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onRememberMeChanged: (Boolean) -> Unit,
+    onLoginClicked: () -> Unit,
     navigateToSettings: () -> Unit,
-    navigateToList: () -> Unit,
-    viewModel: PreferencesViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
 
+    Scaffold(
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = navigateToSettings, navigateToAbout = {})
+        }) { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(120, 160, 20)),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = "Logo"
+                )
+
+                Text(
+                    text = stringResource(R.string.textLogotype),
+                    fontSize = 14.sp,
+                    color = Color.White,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier
+                        .width(100.dp)
+                        .padding(end = 8.dp)
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.textInfo),
+                fontSize = 14.sp,
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 40.dp, bottom = 8.dp)
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.labelLogin) + ":",
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .width(70.dp)
+                        .padding(end = 8.dp)
+                )
+                OutlinedTextField(
+                    value = loginState.login,
+                    onValueChange = onLoginChanged,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.labelPassword) + ":",
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .width(70.dp)
+                        .padding(end = 8.dp)
+                )
+                OutlinedTextField(
+                    value = loginState.password,
+                    onValueChange = onPasswordChanged,
+                    modifier = Modifier.padding(end = 16.dp),
+                    visualTransformation = if (loginState.password.isEmpty()) VisualTransformation.None else PasswordVisualTransformation(),
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp)
+            ) {
+                Checkbox(
+                    checked = loginState.rememberMe,
+                    onCheckedChange = onRememberMeChanged,
+                )
+                Text(
+                    text = stringResource(R.string.checkboxSave),
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+            }
+            Button(
+                onClick = {
+                    onLoginClicked()
+                },
+                modifier = Modifier.padding(16.dp),
+                shape = RoundedCornerShape(24.dp),
+                border = BorderStroke(2.dp, Color.Blue),
+                colors = ButtonDefaults.elevatedButtonColors(
+                    containerColor = Color.Blue,
+                    contentColor = Color.White,
+                ),
+                elevation = ButtonDefaults.buttonElevation(8.dp),
+                enabled = true
+            ) {
+                Text(stringResource(R.string.buttonLogin))
+            }
+        }
+    }
 }
 
 @Composable
@@ -78,8 +192,8 @@ fun MyAlertDialog(shouldShowDialog: MutableState<Boolean>) {
     if (shouldShowDialog.value) {
         AlertDialog(
             onDismissRequest = {
-                shouldShowDialog.value = false
-            },
+            shouldShowDialog.value = false
+        },
 
             title = { Text(text = "Sobre") },
             text = { Text(text = "PlainText Password Manager v1.0") },
@@ -107,37 +221,42 @@ fun TopBarComponent(
         MyAlertDialog(shouldShowDialog = shouldShowDialog)
     }
 
-    TopAppBar(
-        title = { Text("PlainText") },
-        actions = {
-            if (navigateToSettings != null && navigateToSensores != null) {
-                IconButton(onClick = { expanded = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Menu")
-                }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Configurações") },
-                        onClick = {
-                            navigateToSettings();
-                            expanded = false;
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    DropdownMenuItem(
-                        text = {
-                            Text("Sobre");
-                        },
-                        onClick = {
-                            shouldShowDialog.value = true;
-                            expanded = false;
-                        },
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
+    TopAppBar(title = { Text(stringResource(R.string.textTitle)) }, actions = {
+        if (navigateToSettings != null && navigateToAbout != null) {
+            IconButton(onClick = { expanded = true }) {
+                Icon(Icons.Default.MoreVert, contentDescription = "Menu")
+            }
+            DropdownMenu(
+                expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.textSettings)) }, onClick = {
+                    navigateToSettings()
+                    expanded = false
+                }, modifier = Modifier.padding(8.dp)
+                )
+                DropdownMenuItem(
+                    text = {
+                    Text(stringResource(R.string.textAbout))
+                }, onClick = {
+                    shouldShowDialog.value = true
+                    expanded = false
+                }, modifier = Modifier.padding(8.dp)
+                )
             }
         }
-    )
+    })
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    PlainTextTheme {
+        Login_screen(
+            loginState = LoginState(),
+            onLoginChanged = {},
+            onPasswordChanged = {},
+            onRememberMeChanged = {},
+            onLoginClicked = {},
+            navigateToSettings = {})
+    }
 }

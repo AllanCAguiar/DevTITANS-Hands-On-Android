@@ -3,8 +3,7 @@ package com.example.plaintext.ui.screens
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,17 +15,17 @@ import com.example.plaintext.ui.screens.hello.Hello_screen
 import com.example.plaintext.ui.screens.list.AddButton
 import com.example.plaintext.ui.screens.list.ListView
 import com.example.plaintext.ui.screens.login.Login_screen
-import com.example.plaintext.ui.screens.login.TopBarComponent
-import com.example.plaintext.ui.screens.preferences.SettingsScreen
-import com.example.plaintext.ui.viewmodel.ListViewModel
-import com.example.plaintext.ui.viewmodel.PreferencesViewModel
+import com.example.plaintext.ui.viewmodel.LoginViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
 
 @Composable
 fun PlainTextApp(
     appState: JetcasterAppState = rememberJetcasterAppState()
+
 ) {
+    val loginViewModel: LoginViewModel = viewModel()
+    val loginState by loginViewModel.loginState
     NavHost(
         navController = appState.navController,
         startDestination = Screen.Hello("DevTITANS"),
@@ -36,10 +35,14 @@ fun PlainTextApp(
             var args = it.toRoute<Screen.Hello>()
             Hello_screen(args)
         }
-        composable<Screen.Login>{
+        composable<Screen.Login> {
             Login_screen(
+                loginState = loginState,
+                onLoginChanged = loginViewModel::onLoginChange,
+                onPasswordChanged = loginViewModel::onPasswordChange,
+                onRememberMeChanged = loginViewModel::onRememberMeChange,
+                onLoginClicked = { loginViewModel.onLoginClick {} },
                 navigateToSettings = {},
-                navigateToList = {}
             )
         }
         composable<Screen.EditList>(
