@@ -28,7 +28,7 @@ fun PlainTextApp(
     val loginState by loginViewModel.loginState
     NavHost(
         navController = appState.navController,
-        startDestination = Screen.Hello("DevTITANS"),
+        startDestination = Screen.Login,
     )
     {
         composable<Screen.Hello>{
