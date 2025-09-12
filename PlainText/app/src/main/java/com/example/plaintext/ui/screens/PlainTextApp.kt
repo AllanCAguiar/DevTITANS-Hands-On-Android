@@ -1,6 +1,8 @@
 package com.example.plaintext.ui.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -8,13 +10,17 @@ import com.example.plaintext.data.model.PasswordInfo
 import com.example.plaintext.ui.screens.editList.EditList
 import com.example.plaintext.ui.screens.hello.Hello_screen
 import com.example.plaintext.ui.screens.login.Login_screen
+import com.example.plaintext.ui.viewmodel.LoginViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
 
 @Composable
 fun PlainTextApp(
     appState: JetcasterAppState = rememberJetcasterAppState()
+
 ) {
+    val loginViewModel: LoginViewModel = viewModel()
+    val loginState by loginViewModel.loginState
     NavHost(
         navController = appState.navController,
         startDestination = Screen.Login,
@@ -24,7 +30,14 @@ fun PlainTextApp(
             Hello_screen(args)
         }
         composable<Screen.Login> {
-            Login_screen(navigateToSettings = {}, navigateToList = {})
+            Login_screen(
+                loginState = loginState,
+                onLoginChanged = loginViewModel::onLoginChange,
+                onPasswordChanged = loginViewModel::onPasswordChange,
+                onRememberMeChanged = loginViewModel::onRememberMeChange,
+                onLoginClicked = { loginViewModel.onLoginClick {} },
+                navigateToSettings = {},
+            )
         }
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())

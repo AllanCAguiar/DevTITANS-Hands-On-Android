@@ -1,6 +1,5 @@
 package com.example.plaintext.ui.screens.login
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,38 +46,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.plaintext.R
 import com.example.plaintext.ui.theme.PlainTextTheme
-
-data class LoginState(
-    val login: String,
-    val password: String,
-    val rememberMe: Boolean,
-    val checkCredentials: (String, String) -> Boolean,
-)
+import com.example.plaintext.ui.viewmodel.LoginState
 
 @Composable
 fun Login_screen(
+    loginState: LoginState,
+    onLoginChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onRememberMeChanged: (Boolean) -> Unit,
+    onLoginClicked: () -> Unit,
     navigateToSettings: () -> Unit,
-    navigateToList: () -> Unit,
-    //viewModel: PreferencesViewModel = hiltViewModel()
 ) {
-    var state by remember {
-        mutableStateOf(
-            LoginState(
-                login = "",
-                password = "",
-                rememberMe = false,
-                checkCredentials = { login, password -> false })
-        )
-    }
-
     val context = LocalContext.current
 
     Scaffold(
         topBar = {
             TopBarComponent(
-                navigateToSettings = navigateToSettings, navigateToAbout = {
-
-                })
+                navigateToSettings = navigateToSettings, navigateToAbout = {})
         }) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -132,9 +116,9 @@ fun Login_screen(
                         .padding(end = 8.dp)
                 )
                 OutlinedTextField(
-                    value = state.login, onValueChange = { newLogin ->
-                        state = state.copy(login = newLogin)
-                    }, modifier = Modifier.padding(end = 16.dp)
+                    value = loginState.login,
+                    onValueChange = onLoginChanged,
+                    modifier = Modifier.padding(end = 16.dp)
                 )
             }
 
@@ -152,12 +136,10 @@ fun Login_screen(
                         .padding(end = 8.dp)
                 )
                 OutlinedTextField(
-                    value = state.password,
-                    onValueChange = { newPassword ->
-                        state = state.copy(password = newPassword)
-                    },
+                    value = loginState.password,
+                    onValueChange = onPasswordChanged,
                     modifier = Modifier.padding(end = 16.dp),
-                    visualTransformation = if (state.password.isEmpty()) VisualTransformation.None else PasswordVisualTransformation(),
+                    visualTransformation = if (loginState.password.isEmpty()) VisualTransformation.None else PasswordVisualTransformation(),
                 )
             }
 
@@ -166,10 +148,8 @@ fun Login_screen(
                 modifier = Modifier.padding(vertical = 6.dp, horizontal = 8.dp)
             ) {
                 Checkbox(
-                    checked = state.rememberMe,
-                    onCheckedChange = { isChecked ->
-                        state = state.copy(rememberMe = isChecked)
-                    },
+                    checked = loginState.rememberMe,
+                    onCheckedChange = onRememberMeChanged,
                 )
                 Text(
                     text = stringResource(R.string.checkboxSave),
@@ -181,13 +161,7 @@ fun Login_screen(
             }
             Button(
                 onClick = {
-                    val name = state.login
-                    if (name.isBlank()) {
-                        Toast.makeText(context, R.string.warningEmptyLogin, Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        navigateToList()
-                    }
+                    onLoginClicked()
                 },
                 modifier = Modifier.padding(16.dp),
                 shape = RoundedCornerShape(24.dp),
@@ -210,8 +184,8 @@ fun MyAlertDialog(shouldShowDialog: MutableState<Boolean>) {
     if (shouldShowDialog.value) {
         AlertDialog(
             onDismissRequest = {
-                shouldShowDialog.value = false
-            },
+            shouldShowDialog.value = false
+        },
 
             title = { Text(text = stringResource(R.string.textAbout)) },
             text = { Text(text = stringResource(R.string.textVersion)) },
@@ -246,17 +220,17 @@ fun TopBarComponent(
                 expanded = expanded, onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.textSettings)) }, onClick = {
-                        navigateToSettings()
-                        expanded = false
-                    }, modifier = Modifier.padding(8.dp)
+                    navigateToSettings()
+                    expanded = false
+                }, modifier = Modifier.padding(8.dp)
                 )
                 DropdownMenuItem(
                     text = {
-                        Text(stringResource(R.string.textAbout))
-                    }, onClick = {
-                        shouldShowDialog.value = true
-                        expanded = false
-                    }, modifier = Modifier.padding(8.dp)
+                    Text(stringResource(R.string.textAbout))
+                }, onClick = {
+                    shouldShowDialog.value = true
+                    expanded = false
+                }, modifier = Modifier.padding(8.dp)
                 )
             }
         }
@@ -268,8 +242,11 @@ fun TopBarComponent(
 fun LoginScreenPreview() {
     PlainTextTheme {
         Login_screen(
-            navigateToSettings = {},
-            navigateToList = {},
-        )
+            loginState = LoginState(),
+            onLoginChanged = {},
+            onPasswordChanged = {},
+            onRememberMeChanged = {},
+            onLoginClicked = {},
+            navigateToSettings = {})
     }
 }
