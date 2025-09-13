@@ -17,6 +17,13 @@ hilt = "2.51.1"
 javapoet = "1.13.0"
 uiToolingPreview = "1.9.1"
 uiTooling = "1.9.1"
+roomRuntime = "2.5.1"
+roomCompiler = "$room_version"
+roomKtx = "$room_version"
+hiltCompiler = "2.48"
+roomCompilerVersion = "$room_version"
+roomKtxVersion = "$room_version"
+hiltCompilerVersion = "2.48"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -46,6 +53,13 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 javapoet = { module = "com.squareup:javapoet", version.ref = "javapoet" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "uiToolingPreview" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
+room-compiler = { group = "(", name = "room-compiler", version.ref = "roomCompiler" }
+room-ktx = { group = "(", name = "room-ktx", version.ref = "roomKtx" }
+dagger-hilt-compiler = { group = "(", name = "hilt-compiler", version.ref = "hiltCompiler" }
+x_androidx-room-compiler = { group = "(", name = "room-compiler", version.ref = "roomCompilerVersion" }
+x_androidx-room-ktx = { group = "(", name = "room-ktx", version.ref = "roomKtxVersion" }
+x_com-hilt-compiler = { group = "(", name = "hilt-compiler", version.ref = "hiltCompilerVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
