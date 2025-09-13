@@ -7,6 +7,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import mas
 import kotlin.reflect.KProperty
 
 // Implemente a classe Password e PasswordInfo
@@ -14,6 +15,26 @@ import kotlin.reflect.KProperty
 // PasswordInfo deve ser uma classe de dados serializável
 
 @Entity(
+    @Entity(
+        tableName = "passwords" // Correto: nome da tabela
+    )
+    data class Password(
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "id")
+        val id: Int = 0,
+
+        @ColumnInfo(name = "name")
+        val name: String,
+
+        @ColumnInfo(name = "login")
+        val login: String,
+
+        @ColumnInfo(name = "password")
+        val password: /* String */ String,
+
+        @ColumnInfo(name = "notes")
+        val notes: String? = null
+    )
     tableName = "passwords"
 )
 @Immutable
