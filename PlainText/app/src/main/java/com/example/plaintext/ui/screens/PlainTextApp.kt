@@ -42,7 +42,7 @@ fun PlainTextApp(
                 onPasswordChanged = loginViewModel::onPasswordChange,
                 onRememberMeChanged = loginViewModel::onRememberMeChange,
                 onLoginClicked = { loginViewModel.onLoginClick {} },
-                navigateToSettings = {},
+                navigateToSettings = {appState.navigateToPreferences()},
             )
         }
         composable<Screen.EditList>(
@@ -54,6 +54,9 @@ fun PlainTextApp(
                 navigateBack = {},
                 savePassword = { password -> Unit }
             )
+        }
+        composable<Screen.Preferences> {
+            SettingsScreen(navController = appState.navController)
         }
     }
 }
