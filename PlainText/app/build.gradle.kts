@@ -4,18 +4,18 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp) // Kotlin Symbol Processing
+    alias(libs.plugins.hilt) // Hilt Gradle Plugin
 }
 
 android {
     namespace = "com.example.plaintext"
-    compileSdk = 35
+    compileSdk = 35 // Considere usar uma versão estável se 35 for preview
 
     defaultConfig {
         applicationId = "com.example.plaintext"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 34 // Mantenha targetSdk igual ou menor que compileSdk
         versionCode = 1
         versionName = "1.0"
 
@@ -41,48 +41,45 @@ android {
     buildFeatures {
         compose = true
     }
+
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.androidx.compose.bom)) // Importa o BOM do Compose
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.tooling.preview) // Para previews no Android Studio
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    implementation(libs.x.androidx.room.ktx)
+
+    // Room - Usando KSP
+    implementation(libs.androidx.room.runtime) // Alias correto para runtime
+    implementation(libs.androidx.room.ktx)     // Alias correto para Kotlin extensions
+    ksp(libs.androidx.room.compiler)        // Alias correto para o compiler com KSP
+
+    // Navigation
+    implementation(libs.navigation.compose)
+
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Hilt - Dependency Injection
+    implementation(libs.hilt.android)           // Hilt runtime
+    ksp(libs.hilt.compiler)             // Hilt compiler com KSP (assumindo alias correto no TOML)
+    implementation(libs.androidx.hilt.navigation.compose) // Hilt integration for Navigation Compose
+
+    // Testes
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom)) // Para testes de UI do Compose
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    annotationProcessor(libs.room.compiler)
-    annotationProcessor(libs.dagger.hilt.compiler)
-    annotationProcessor(libs.x.androidx.room.compiler)
-    annotationProcessor(libs.x.com.hilt.compiler)
+
+    // Debugging (Tooling para Compose)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    //navigation
-    implementation(libs.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-
-    //room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    ksp(libs.androidx.room.compiler)
-
-    // Dependency injection
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 }
 
 hilt {

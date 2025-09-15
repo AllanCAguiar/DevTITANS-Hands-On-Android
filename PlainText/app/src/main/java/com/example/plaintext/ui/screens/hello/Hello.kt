@@ -23,96 +23,100 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.plaintext.ui.screens.Screen
+import com.example.plaintext.ui.screens.Screen // Verifique se este import é necessário e correto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import javax.inject.Inject // Importe @Inject
 
-class DbSimulator() {
-    private val datalist = mutableListOf<String>();
+// DbSimulator agora pode ser injetado pelo Hilt
+class DbSimulator @Inject constructor() { // <--- @Inject constructor() ADICIONADO AQUI
+    private val datalist = mutableListOf<String>()
 
     init {
         for (i in 1..100) {
-            datalist.add("devtitans #$i");
+            datalist.add("devtitans #$i")
         }
-
     }
 
     fun getData(): Flow<List<String>> = flow {
-        delay(5000)
+        delay(5000) // Simula um atraso de rede/DB
         emit(datalist)
     }
 }
 
-data class listViewState(
+// Estado para a UI da tela Hello
+data class listViewState( // Considere renomear para HelloViewState ou algo mais específico para esta tela
     var listState: List<String> = emptyList(),
     var size: Int = 0
 )
 
+// ViewModel para a tela Hello
 @HiltViewModel
 class ListViewModel @Inject constructor(
-    private val dbSimulator: DbSimulator
+    private val dbSimulator: DbSimulator // Hilt agora sabe como fornecer DbSimulator
 ) : ViewModel() {
     var listState by mutableStateOf(listViewState())
         private set
 
     init {
-        viewModelScope.launch {
-            collectData()
-        }
+        // Inicia a coleta de dados quando o ViewModel é criado
+        collectData()
     }
 
     fun collectData() {
         viewModelScope.launch {
-            dbSimulator.getData().collect {
-                listState = listState.copy(listState = it, size = it.size)
+            dbSimulator.getData().collect { dataFromSimulator ->
+                listState = listState.copy(listState = dataFromSimulator, size = dataFromSimulator.size)
             }
         }
     }
 }
 
+// Composable principal para a tela Hello
 @Composable
-fun Hello_screen(modifier: Modifier, viewModel: ListViewModel = hiltViewModel()) {
-    val listViewState: listViewState = viewModel.listState
+fun Hello_screen(modifier: Modifier = Modifier, viewModel: ListViewModel = hiltViewModel()) {
+    val currentUiState: listViewState = viewModel.listState // Renomeado para evitar conflito com o tipo
 
     Box(
-        modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        if (listViewState.listState.size == 0) {
-            Text("Carregando...", fontSize = 20.sp)
+        if (currentUiState.listState.isEmpty()) { // Verificando se a lista está vazia
+            Text("Carregando dados da tela Hello...", fontSize = 20.sp)
         } else {
-            Column() {
+            Column { // Removido parênteses desnecessários
                 Text(
-                    text = "Total de itens: ${listViewState.size}",
+                    text = "Total de itens (Hello Screen): ${currentUiState.size}",
                     fontSize = 20.sp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.Red)
+                        .background(Color.Red) // Apenas para destaque
                         .padding(16.dp)
                 )
-                LazyColumn {
-                    items(listViewState.listState.size) { index ->
+                LazyColumn(modifier = Modifier.weight(1f)) { // Adicionado weight para preencher o espaço restante
+                    items(currentUiState.listState.size) { index ->
                         Text(
-                            text = listViewState.listState[index],
+                            text = currentUiState.listState[index],
                             fontSize = 20.sp,
-                            modifier = Modifier.padding(16.dp).fillMaxWidth()
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth()
                         )
                     }
                 }
-
             }
-
         }
     }
 }
 
+// Sobrecarga do Composable para integração com navegação (se Screen.Hello for um argumento de navegação)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Hello_screen(args: Screen.Hello) {
-    Scaffold { padding ->
-        Hello_screen(Modifier.padding(padding))
+fun Hello_screen(args: Screen.Hello) { // Verifique se Screen.Hello é realmente usado/necessário
+    Scaffold { innerPadding ->
+        Hello_screen(modifier = Modifier.padding(innerPadding))
     }
 }
