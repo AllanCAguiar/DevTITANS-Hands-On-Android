@@ -40,16 +40,10 @@ class ListViewModel @Inject constructor(
     private val passwordDBStore: PasswordDBStore // Injetamos a interface, não a implementação
 ) : ViewModel() {
 
-    // _listViewState é um MutableStateFlow privado que só o ViewModel pode modificar.
-    // Ele guarda o estado atual da tela.
     private val _listViewState = MutableStateFlow(ListViewState())
-
-    // listViewState é um StateFlow público e imutável que a UI pode observar.
-    // A UI coleta deste Flow para receber atualizações de estado.
     val listViewState: StateFlow<ListViewState> = _listViewState.asStateFlow()
 
     init {
-        // Ao iniciar o ViewModel, começamos a observar a lista de senhas.
         observePasswordList()
     }
 
@@ -58,37 +52,29 @@ class ListViewModel @Inject constructor(
      * Atualiza o _listViewState conforme novas listas são emitidas ou erros ocorrem.
      */
     private fun observePasswordList() {
-        // Marcarcarregamento começou.
         _listViewState.update { currentState ->
             currentState.copy(isLoading = true, error = null)
         }
 
-        // passwordDBStore.getAllPasswords() deve retornar um Flow<List<Password>>.
-        // Este Flow emitirá uma nova lista sempre que os dados no banco mudarem.
-        passwordDBStore.getAllPasswords()
+        passwordDBStore.getList() // <<< CORRIGIDO DE getAllPasswords() PARA getList()
             .onEach { passwordsFromDb ->
-                // Quando uma nova lista é emitida pelo Flow,
-                // atualizamos nosso estado com os novos dados.
                 _listViewState.update { currentState ->
                     currentState.copy(
                         passwords = passwordsFromDb,
-                        isLoading = false, // O carregamento terminou
-                        error = null       // Limpamos qualquer erro anterior
+                        isLoading = false,
+                        error = null
                     )
                 }
             }
             .catch { exception ->
-                // Se ocorrer um erro durante a coleta do Flow (ex: problema no banco),
-                // capturamos a exceção e atualizamos o estado com a mensagem de erro.
                 _listViewState.update { currentState ->
                     currentState.copy(
-                        isLoading = false, // O carregamento falhou
+                        isLoading = false,
                         error = exception.localizedMessage ?: "Ocorreu um erro desconhecido ao buscar as senhas."
                     )
                 }
             }
-            .launchIn(viewModelScope) // Inicia a coleta do Flow no escopo do ViewModel.
-        // A coleta será cancelada automaticamente quando o ViewModel for destruído.
+            .launchIn(viewModelScope)
     }
 
     /**
@@ -100,22 +86,20 @@ class ListViewModel @Inject constructor(
      * @param notes Anotações opcionais.
      */
     fun addPassword(name: String, login: String, pass: String, notes: String?) {
-        // As operações de banco de dados devem ser feitas em uma coroutine.
         viewModelScope.launch {
             try {
                 val newPassword = Password(
                     // O 'id' é gerado automaticamente pelo Room, então não precisamos definir aqui.
                     name = name,
                     login = login,
-                    password = pass,
+                    password = pass, // Lembre-se que no Password.kt corrigido, o campo 'password' da entidade pode ter sido renomeado (ex: password_text)
                     notes = notes
                 )
-                passwordDBStore.insertPassword(newPassword)
-                // Após a inserção, o Flow de getAllPasswords() deverá emitir
-                // automaticamente a lista atualizada, e o observePasswordList()
-                // atualizará o _listViewState. Não precisamos fazer nada aqui para forçar a atualização da UI.
+                passwordDBStore.add(newPassword) // <<< CORRIGIDO DE insertPassword() PARA add()
+                // Após a inserção, o Flow de getList() deverá emitir
+                // automaticamente a lista atualizada se a implementação do repositório
+                // e o DAO estiverem configurados para isso (o Room faz isso automaticamente).
             } catch (e: Exception) {
-                // Se a inserção falhar, atualizamos o estado com uma mensagem de erro.
                 _listViewState.update { currentState ->
                     currentState.copy(error = e.localizedMessage ?: "Falha ao adicionar a senha.")
                 }
@@ -131,8 +115,22 @@ class ListViewModel @Inject constructor(
     fun deletePassword(password: Password) {
         viewModelScope.launch {
             try {
-                passwordDBStore.deletePassword(password)
-                // Similar à adição, o Flow de getAllPasswords() cuidará de atualizar a UI.
+                // TODO: A interface PasswordDBStore não possui um método deletePassword(Password) ou delete(Password).
+                //       Você precisará:
+                //       1. Adicionar um método `delete(password: Password)` (ou similar com o ID) à interface PasswordDBStore.
+                //       2. Implementar este método na classe que implementa PasswordDBStore (ex: LocalPasswordDBStore),
+                //          fazendo a chamada ao DAO correspondente (ex: passwordDao.deletePassword(password)).
+                //       3. Descomentar e usar a chamada abaixo:
+                // passwordDBStore.delete(password) // Exemplo de chamada após adicionar o método à interface
+
+                // Se você já tem um método de exclusão no DAO e quer usá-lo através de uma implementação
+                // concreta que não seja a interface PasswordDBStore diretamente, você precisaria rever
+                // a estrutura de injeção ou a própria interface.
+
+                // Por enquanto, esta operação não pode ser completada com a interface PasswordDBStore atual.
+                _listViewState.update { currentState ->
+                    currentState.copy(error = "Função de exclusão não implementada na interface do repositório.")
+                }
             } catch (e: Exception) {
                 _listViewState.update { currentState ->
                     currentState.copy(error = e.localizedMessage ?: "Falha ao excluir a senha.")
@@ -140,6 +138,4 @@ class ListViewModel @Inject constructor(
             }
         }
     }
-
-
 }
