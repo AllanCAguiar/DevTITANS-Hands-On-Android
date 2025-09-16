@@ -29,7 +29,7 @@ fun PlainTextApp(
     val loginState by loginViewModel.loginState
     NavHost(
         navController = appState.navController,
-        startDestination = Screen.Login,
+        startDestination = Screen.EditList(PasswordInfo(1, "Nome", "Usuário", "Senha", "Notas"))
     )
     {
         composable<Screen.Hello>{

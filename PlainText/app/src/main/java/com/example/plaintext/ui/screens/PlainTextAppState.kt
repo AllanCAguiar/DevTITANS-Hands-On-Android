@@ -73,6 +73,9 @@ class JetcasterAppState(
     fun navigateToPreferences() {
         navController.navigate(Screen.Preferences)
     }
+    fun navigateToEditList() {
+        navController.navigate(route = Screen.EditList)
+    }
 
 }
 
