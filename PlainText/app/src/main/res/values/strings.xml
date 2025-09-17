@@ -10,6 +10,7 @@
     <string name="textLogotype">\"The most secure password manager\" Bob and Alice</string>
     <string name="textSettings">Configuraçoes</string>
     <string name="textTitle">PlainText</string>
+    <string name="textLoading">Carregando...</string>
     <string name="textVersion">PlainText Password Manager v1.0</string>
     <string name="warningEmptyLogin">Insira um login</string>
 
