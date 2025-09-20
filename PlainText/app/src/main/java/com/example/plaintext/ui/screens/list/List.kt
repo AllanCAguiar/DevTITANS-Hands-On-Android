@@ -34,9 +34,8 @@ import com.example.plaintext.ui.viewmodel.ListViewState
 
 @Composable
 fun ListScreen(
-    listState: ListViewState,
-    onAddClick: () -> Unit,
-    navigateToEdit: (password: PasswordInfo) -> Unit
+    //listState: ListViewState,
+    onAddClick: () -> Unit, navigateToEdit: (password: PasswordInfo) -> Unit
 ) {
     Scaffold(floatingActionButton = {
         AddButton(onClick = onAddClick)
@@ -46,7 +45,7 @@ fun ListScreen(
     }) { innerPadding ->
         ListItemContent(
             modifier = Modifier.padding(innerPadding),
-            listState = listState,
+            //listState = listState,
             navigateToEdit = navigateToEdit
         )
     }
@@ -66,17 +65,17 @@ fun AddButton(onClick: () -> Unit) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ListItemContent(
-    modifier: Modifier, listState: ListViewState, navigateToEdit: (password: PasswordInfo) -> Unit
-) {/*
-    Mock para testar o composable
+    modifier: Modifier,
+    //listState: ListViewState,
+    navigateToEdit: (password: PasswordInfo) -> Unit
+) {
+
     val mockPasswordList = listOf(
         PasswordInfo(
             id = 1, name = "Twitter", login = "dev", password = "123", notes = null
-        ),
-        PasswordInfo(
+        ), PasswordInfo(
             id = 2, name = "Facebook", login = "devtitans", password = "123", notes = null
-        ),
-        PasswordInfo(
+        ), PasswordInfo(
             id = 3, name = "Moodle", login = "dev.com", password = "123", notes = null
         )
     )
@@ -84,10 +83,10 @@ fun ListItemContent(
     val mockListState = ListViewState(
         passwordList = mockPasswordList, isCollected = true
     )
-    */
+
 
     when {
-        !listState.isCollected -> {
+        !mockListState.isCollected -> {
             LoadingScreen()
         }
 
@@ -95,9 +94,9 @@ fun ListItemContent(
             LazyColumn(
                 modifier = modifier.fillMaxSize()
             ) {
-                items(listState.passwordList.size) {
+                items(mockListState.passwordList.size) {
                     ListItem(
-                        listState.passwordList[it], navigateToEdit
+                        mockListState.passwordList[it], navigateToEdit
                     )
                 }
             }
