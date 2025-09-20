@@ -33,5 +33,10 @@ data class PasswordInfo(
     val name: String,
     val login: String,
     val password: String,
-    val notes: String
-) : Parcelable
+    val notes: String?,
+) : Parcelable {
+    operator fun getValue(nothing: Nothing?, property: KProperty<*>): Password =
+        Password(
+            id = id,
+        )
+    }

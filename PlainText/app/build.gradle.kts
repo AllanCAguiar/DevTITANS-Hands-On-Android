@@ -52,20 +52,12 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    //implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    //implementation(libs.room.runtime)
-    //implementation(libs.room.ktx)
-    //implementation(libs.x.androidx.room.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    //annotationProcessor(libs.room.compiler)
-    //annotationProcessor(libs.dagger.hilt.compiler)
-    //annotationProcessor(libs.x.androidx.room.compiler)
-    //annotationProcessor(libs.x.com.hilt.compiler)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
@@ -76,7 +68,6 @@ dependencies {
     //room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    debugImplementation(libs.androidx.compose.ui.tooling)
     ksp(libs.androidx.room.compiler)
 
     // Dependency injection
