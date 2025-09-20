@@ -1,25 +1,29 @@
 package com.example.plaintext.data.model
 
 import android.os.Parcelable
-import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import kotlin.reflect.KProperty
 
-// Implemente a classe Password e PasswordInfo
-// Password deve ser uma entidade do Room
-// PasswordInfo deve ser uma classe de dados serializável
-
-@Entity(
-    tableName = "passwords"
-)
-@Immutable
+@Entity(tableName = "passwords")
 data class Password(
-    @PrimaryKey
-    @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Int = 0,
+
+    @ColumnInfo(name = "name")
+    val name: String,
+
+    @ColumnInfo(name = "login")
+    val login: String,
+
+    @ColumnInfo(name = "password_text")
+    val password_text: String,
+
+    @ColumnInfo(name = "notes")
+    val notes: String? = null
 )
 
 @Serializable
