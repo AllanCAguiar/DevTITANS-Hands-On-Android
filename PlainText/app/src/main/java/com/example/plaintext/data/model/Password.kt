@@ -33,5 +33,5 @@ data class PasswordInfo(
     val name: String,
     val login: String,
     val password: String,
-    val notes: String?
+    val notes: String
 ) : Parcelable
