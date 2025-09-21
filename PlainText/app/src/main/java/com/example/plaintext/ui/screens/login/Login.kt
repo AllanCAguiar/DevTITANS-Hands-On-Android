@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
@@ -66,10 +68,10 @@ fun Login_screen(
         }) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
         ) {
             Row(
                 modifier = Modifier
@@ -97,7 +99,6 @@ fun Login_screen(
             Text(
                 text = stringResource(R.string.textInfo),
                 fontSize = 14.sp,
-                color = Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 40.dp, bottom = 8.dp)
             )
@@ -109,7 +110,6 @@ fun Login_screen(
                 Text(
                     text = stringResource(R.string.labelLogin) + ":",
                     fontSize = 14.sp,
-                    color = Color.Black,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .width(70.dp)
@@ -129,7 +129,6 @@ fun Login_screen(
                 Text(
                     text = stringResource(R.string.labelPassword) + ":",
                     fontSize = 14.sp,
-                    color = Color.Black,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .width(70.dp)
@@ -154,7 +153,6 @@ fun Login_screen(
                 Text(
                     text = stringResource(R.string.checkboxSave),
                     fontSize = 14.sp,
-                    color = Color.Black,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.padding(end = 8.dp)
                 )
@@ -184,8 +182,8 @@ fun MyAlertDialog(shouldShowDialog: MutableState<Boolean>) {
     if (shouldShowDialog.value) {
         AlertDialog(
             onDismissRequest = {
-                shouldShowDialog.value = false
-            },
+            shouldShowDialog.value = false
+        },
 
             title = { Text(text = stringResource(R.string.textAbout)) },
             text = { Text(text = stringResource(R.string.textVersion)) },
@@ -220,17 +218,17 @@ fun TopBarComponent(
                 expanded = expanded, onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.textSettings)) }, onClick = {
-                        navigateToSettings()
-                        expanded = false
-                    }, modifier = Modifier.padding(8.dp)
+                    navigateToSettings()
+                    expanded = false
+                }, modifier = Modifier.padding(8.dp)
                 )
                 DropdownMenuItem(
                     text = {
-                        Text(stringResource(R.string.textAbout))
-                    }, onClick = {
-                        shouldShowDialog.value = true
-                        expanded = false
-                    }, modifier = Modifier.padding(8.dp)
+                    Text(stringResource(R.string.textAbout))
+                }, onClick = {
+                    shouldShowDialog.value = true
+                    expanded = false
+                }, modifier = Modifier.padding(8.dp)
                 )
             }
         }

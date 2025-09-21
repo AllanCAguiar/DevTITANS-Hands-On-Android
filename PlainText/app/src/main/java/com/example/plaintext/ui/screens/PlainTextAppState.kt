@@ -52,8 +52,7 @@ fun rememberJetcasterAppState(
 
 
 class JetcasterAppState(
-    val navController: NavHostController,
-    private val context: Context
+    val navController: NavHostController, private val context: Context
 ) {
 
     fun checkRoute(route: String): Boolean {
@@ -62,18 +61,43 @@ class JetcasterAppState(
         return currentRoute != route
     }
 
-    fun navigateToHello(name: String?){
+    fun navigateToHello(name: String?) {
         navController.navigate(Screen.Hello(name))
     }
 
-    fun navigateToLogin(){
+    fun navigateToLogin() {
         navController.navigate(Screen.Login)
+    }
+
+    fun navigateToList() {
+        navController.navigate(Screen.List)
     }
 
     fun navigateToPreferences() {
         navController.navigate(Screen.Preferences)
     }
 
+    fun navigateToEditList(passwordToEdit: PasswordInfo) {
+        navController.navigate(Screen.EditList(passwordToEdit))
+    }
+
+    fun navigateToAddPassword() {
+        navController.navigate(
+            Screen.EditList(
+                password = PasswordInfo(
+                    id = 0, name = "", login = "", password = "", notes = ""
+                )
+            )
+        )
+    }
+
+    fun navigateToEditPassword(password: PasswordInfo) {
+        navController.navigate(Screen.EditList(password = password))
+    }
+
+    fun navigateBack() {
+        navController.popBackStack()
+    }
 }
 
 /**

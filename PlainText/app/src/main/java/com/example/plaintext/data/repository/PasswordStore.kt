@@ -2,42 +2,49 @@ package com.example.plaintext.data.repository
 
 import com.example.plaintext.data.dao.PasswordDao
 import com.example.plaintext.data.model.Password
-import com.example.plaintext.data.model.PasswordInfo
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 interface PasswordDBStore {
     fun getList(): Flow<List<Password>>
-    suspend fun add(password: Password): Long
+    suspend fun add(password: Password)
     suspend fun update(password: Password)
-    fun get(id: Int): Password?
-    suspend fun save(passwordInfo: PasswordInfo)
-    suspend fun isEmpty(): Flow<Boolean>
+    fun get(id: Int): Flow<Password?>
+    suspend fun delete(password: Password)
+    fun isEmpty(): Flow<Boolean>
 }
 
 class LocalPasswordDBStore(
-    private val passwordDao : PasswordDao
-): PasswordDBStore {
+    private val passwordDao: PasswordDao
+    // Sem @Inject, via Módulo Hilt.
+) : PasswordDBStore {
+
     override fun getList(): Flow<List<Password>> {
-        TODO("Not yet implemented")
+        // Pega todas as senhas do DAO.
+        return passwordDao.getAllPasswords()
     }
 
-    override suspend fun add(password: Password): Long {
-        TODO("Not yet implemented")
+    override suspend fun add(password: Password) {
+        // DAO já é suspend e OnConflictStrategy.REPLACE está no @Insert.
+        passwordDao.insertPassword(password)
     }
 
     override suspend fun update(password: Password) {
-        TODO("Not yet implemented")
+        // Direto para o DAO.
+        passwordDao.updatePassword(password)
     }
 
-    override fun get(id: Int): Password? {
-        TODO("Not yet implemented")
+    override fun get(id: Int): Flow<Password?> {
+        // Pega uma senha específica pelo ID, também como um Flow.
+        return passwordDao.getPasswordById(id)
     }
 
-    override suspend fun save(passwordInfo: PasswordInfo) {
-        TODO("Not yet implemented")
+    override suspend fun delete(password: Password) {
+        // Deleta a senha usando o objeto Password.
+        passwordDao.deletePassword(password)
     }
 
-    override suspend fun isEmpty(): Flow<Boolean> {
-        TODO("Not yet implemented")
+    override fun isEmpty(): Flow<Boolean> {
+        return passwordDao.getAllPasswords().map { it.isEmpty() }
     }
 }
