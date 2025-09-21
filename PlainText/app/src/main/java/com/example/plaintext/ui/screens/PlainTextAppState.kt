@@ -77,8 +77,26 @@ class JetcasterAppState(
         navController.navigate(Screen.Preferences)
     }
 
-    fun navigateToEditList() {
-        navController.navigate(Screen.EditList)
+    fun navigateToEditList(passwordToEdit: PasswordInfo) {
+        navController.navigate(Screen.EditList(passwordToEdit))
+    }
+
+    fun navigateToAddPassword() {
+        navController.navigate(
+            Screen.EditList(
+                password = PasswordInfo(
+                    id = 0, name = "", login = "", password = "", notes = ""
+                )
+            )
+        )
+    }
+
+    fun navigateToEditPassword(password: PasswordInfo) {
+        navController.navigate(Screen.EditList(password = password))
+    }
+
+    fun navigateBack() {
+        navController.popBackStack()
     }
 }
 

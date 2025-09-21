@@ -1,17 +1,14 @@
 package com.example.plaintext.ui.viewmodel
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 data class PreferencesState(
-    val login: String = "",
-    val password: String = "",
-    val preencher: Boolean = false
+    val login: String = "devtitans", val password: String = "123", val remember: Boolean = false
 )
 
 @HiltViewModel
@@ -20,37 +17,37 @@ class PreferencesViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val keyLogin = "login"
-        private const val keyPassword = "password"
-        private const val keyPreencher = "preencher"
+        private const val KEY_LOGIN = "login"
+        private const val KEY_PASSWORD = "password"
+        private const val KEY_REMEMBER = "remember"
     }
 
-    var preferencesState by mutableStateOf(
+    private val _preferencesState = mutableStateOf(
         PreferencesState(
-            login = handle[keyLogin] ?: "devtitans",
-            password = handle[keyPassword] ?: "123",
-            preencher = handle[keyPreencher] ?: true
+            login = handle.get<String>(KEY_LOGIN) ?: "devtitans",
+            password = handle.get<String>(KEY_PASSWORD) ?: "123",
+            remember = handle.get<Boolean>(KEY_REMEMBER) ?: false
         )
     )
-        private set
+    val preferencesState: State<PreferencesState> = _preferencesState
 
     fun updateLogin(login: String) {
-        preferencesState = preferencesState.copy(login = login)
-        handle[keyLogin] = login
+        _preferencesState.value = _preferencesState.value.copy(login = login)
+        handle[KEY_LOGIN] = login
     }
 
     fun updatePassword(password: String) {
-        preferencesState = preferencesState.copy(password = password)
-        handle[keyPassword] = password
+        _preferencesState.value = _preferencesState.value.copy(password = password)
+        handle[KEY_PASSWORD] = password
     }
 
-    fun updatePreencher(preencher: Boolean) {
-        preferencesState = preferencesState.copy(preencher = preencher)
-        handle[keyPreencher] = preencher
+    fun updateRemember(remember: Boolean) {
+        _preferencesState.value = _preferencesState.value.copy(remember = remember)
+        handle[KEY_REMEMBER] = remember
     }
 
     fun checkCredentials(login: String, password: String): Boolean {
-        return login == preferencesState.login && password == preferencesState.password
+        return login == _preferencesState.value.login && password == _preferencesState.value.password
     }
 }
 

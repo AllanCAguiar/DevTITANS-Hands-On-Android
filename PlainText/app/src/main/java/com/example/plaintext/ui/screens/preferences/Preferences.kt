@@ -20,14 +20,13 @@ import com.example.plaintext.ui.screens.util.PreferenceItem
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 
 @Composable
-fun SettingsScreen(navController: NavHostController?,
-                   viewModel: PreferencesViewModel = hiltViewModel()
-){
+fun SettingsScreen(
+    navController: NavHostController?, viewModel: PreferencesViewModel = hiltViewModel()
+) {
     Scaffold(
         topBar = {
             TopBarComponent()
-        }
-    ){ padding ->
+        }) { padding ->
         SettingsContent(modifier = Modifier.padding(padding), viewModel)
     }
 }
@@ -46,7 +45,7 @@ fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewMod
         PreferenceInput(
             title = "Preencher Login",
             label = "Login",
-            fieldValue = state.login,
+            fieldValue = state.value.login,
             summary = "Preencher login na tela inicial"
         ) { novoLogin ->
             viewModel.updateLogin(novoLogin)
@@ -55,7 +54,7 @@ fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewMod
         PreferenceInput(
             title = "Setar Senha",
             label = "Senha",
-            fieldValue = state.password,
+            fieldValue = state.value.password,
             summary = "Senha para entrar no sistema"
         ) { novaSenha ->
             viewModel.updatePassword(novaSenha)
@@ -65,17 +64,14 @@ fun SettingsContent(modifier: Modifier = Modifier, viewModel: PreferencesViewMod
             title = "Preencher Login",
             summary = "Preencher login na tela inicial",
             onClick = {
-                viewModel.updatePreencher(!state.preencher)
+                viewModel.updateRemember(!state.value.remember)
             },
             control = {
                 Switch(
-                    checked = state.preencher,
-                    onCheckedChange = { novoValor ->
-                        viewModel.updatePreencher(novoValor)
-                    }
-                )
-            }
-        )
+                    checked = state.value.remember, onCheckedChange = { novoValor ->
+                        viewModel.updateRemember(novoValor)
+                    })
+            })
     }
 }
 

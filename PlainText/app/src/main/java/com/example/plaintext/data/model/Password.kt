@@ -31,13 +31,21 @@ data class PasswordInfo(
     val notes: String?,
 ) : Parcelable {
 
-    operator fun getValue(nothing: Nothing?, property: KProperty<*>): Password =
-        Password(
-            id = id,
-            name = name,
-            login = login,
-            passwordText = password,
-            notes = notes,
-        )
-    }
+    operator fun getValue(nothing: Nothing?, property: KProperty<*>): Password = Password(
+        id = id,
+        name = name,
+        login = login,
+        passwordText = password,
+        notes = notes,
+    )
+}
 
+fun PasswordInfo.toPassword(): Password {
+    return Password(
+        id = this.id,
+        name = this.name,
+        login = this.login,
+        passwordText = this.password, // Supondo que o campo se chame 'passwordText' na classe Password
+        notes = this.notes
+    )
+}
