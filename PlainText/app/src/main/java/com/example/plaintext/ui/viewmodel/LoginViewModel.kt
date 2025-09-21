@@ -31,7 +31,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         val login = _loginState.value.login
         val password = _loginState.value.password
 
-        if (login == "dev" && password == "1234") {
+        // Removendo valores fixos
+        if (!login.isEmpty() && !password.isEmpty()) {
             _loginState.value = _loginState.value.copy(loginError = false)
             navigateToList(login)
         } else {

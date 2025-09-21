@@ -56,9 +56,7 @@ fun PlainTextApp(
                 onLoginClicked = {
                     loginViewModel.onLoginClick(
                         navigateToList = {
-                            appState.navController.navigate(Screen.List) {
-                                popUpTo<Screen.Login> { inclusive = true }
-                            }
+                            appState.navController.navigate(Screen.List)
                         },
                         onLoginError = {
                             Toast.makeText(context, "Login/Senha inválidos!", Toast.LENGTH_SHORT).show()
