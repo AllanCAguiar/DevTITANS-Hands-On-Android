@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 data class LoginState(
-    val login: String = "", val password: String = "", val rememberMe: Boolean = false
+    val login: String = "", val password: String = "", val rememberMe: Boolean = false , val loginError: Boolean = false
 )
 
 @HiltViewModel
@@ -27,7 +27,16 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         _loginState.value = _loginState.value.copy(rememberMe = isChecked)
     }
 
-    fun onLoginClick(navigateToList: (String) -> Unit) {
-        navigateToList(_loginState.value.login)
+    fun onLoginClick(navigateToList: (String) -> Unit, onLoginError: () -> Unit) {
+        val login = _loginState.value.login
+        val password = _loginState.value.password
+
+        if (login == "dev" && password == "1234") {
+            _loginState.value = _loginState.value.copy(loginError = false)
+            navigateToList(login)
+        } else {
+            _loginState.value = _loginState.value.copy(loginError = true)
+            onLoginError()
+        }
     }
 }

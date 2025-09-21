@@ -1,5 +1,8 @@
 package com.example.plaintext.ui.screens
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,6 +21,8 @@ import com.example.plaintext.ui.viewmodel.LoginViewModel
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun PlainTextApp(
@@ -30,6 +35,7 @@ fun PlainTextApp(
     val listState by listViewModel.listViewState
     val preferencesViewModel: PreferencesViewModel = viewModel()
     val preferencesState by preferencesViewModel.preferencesState
+    val context = LocalContext.current
 
     NavHost(
         navController = appState.navController,
@@ -39,14 +45,26 @@ fun PlainTextApp(
             var args = it.toRoute<Screen.Hello>()
             Hello_screen(args)
         }
+        composable<Screen.List> {Text("Login bem-sucedido! Você está na tela de Lista.")}
         composable<Screen.Login> {
             Login_screen(
                 loginState = loginState,
                 onLoginChanged = loginViewModel::onLoginChange,
                 onPasswordChanged = loginViewModel::onPasswordChange,
                 onRememberMeChanged = loginViewModel::onRememberMeChange,
-                onLoginClicked = { appState.navigateToList() },
                 navigateToSettings = { appState.navigateToPreferences() },
+                onLoginClicked = {
+                    loginViewModel.onLoginClick(
+                        navigateToList = {
+                            appState.navController.navigate(Screen.List) {
+                                popUpTo<Screen.Login> { inclusive = true }
+                            }
+                        },
+                        onLoginError = {
+                            Toast.makeText(context, "Login/Senha inválidos!", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                },    
             )
         }
         composable<Screen.EditList>(
