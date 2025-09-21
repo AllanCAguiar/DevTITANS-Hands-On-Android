@@ -6,24 +6,19 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KProperty
 
 @Entity(tableName = "passwords")
 data class Password(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Int = 0,
 
-    @ColumnInfo(name = "name")
-    val name: String,
+    @ColumnInfo(name = "name") val name: String,
 
-    @ColumnInfo(name = "login")
-    val login: String,
+    @ColumnInfo(name = "login") val login: String,
 
-    @ColumnInfo(name = "password_text")
-    val password_text: String,
+    @ColumnInfo(name = "password_text") val passwordText: String,
 
-    @ColumnInfo(name = "notes")
-    val notes: String? = null
+    @ColumnInfo(name = "notes") val notes: String? = null
 )
 
 @Serializable
@@ -35,8 +30,11 @@ data class PasswordInfo(
     val password: String,
     val notes: String?,
 ) : Parcelable {
-    operator fun getValue(nothing: Nothing?, property: KProperty<*>): Password =
-        Password(
-            id = id,
-        )
-    }
+    operator fun getValue(nothing: Nothing?, property: KProperty<*>): Password = Password(
+        id = id,
+        name = name,
+        login = login,
+        passwordText = password,
+        notes = notes,
+    )
+}

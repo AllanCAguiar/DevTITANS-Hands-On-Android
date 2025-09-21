@@ -1,20 +1,18 @@
 package com.example.plaintext.ui.screens
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
 import com.example.plaintext.data.model.PasswordInfo
 import com.example.plaintext.ui.screens.editList.EditList
 import com.example.plaintext.ui.screens.hello.Hello_screen
-import com.example.plaintext.ui.screens.list.AddButton
+import com.example.plaintext.ui.screens.list.ListScreen
 import com.example.plaintext.ui.screens.login.Login_screen
 import com.example.plaintext.ui.screens.preferences.SettingsScreen
+import com.example.plaintext.ui.viewmodel.ListViewModel
 import com.example.plaintext.ui.viewmodel.LoginViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
@@ -26,12 +24,14 @@ fun PlainTextApp(
 ) {
     val loginViewModel: LoginViewModel = viewModel()
     val loginState by loginViewModel.loginState
+    val listViewModel: ListViewModel = viewModel()
+    val listState by listViewModel.listViewState
+
     NavHost(
         navController = appState.navController,
         startDestination = Screen.Login,
-    )
-    {
-        composable<Screen.Hello>{
+    ) {
+        composable<Screen.Hello> {
             var args = it.toRoute<Screen.Hello>()
             Hello_screen(args)
         }
@@ -41,22 +41,24 @@ fun PlainTextApp(
                 onLoginChanged = loginViewModel::onLoginChange,
                 onPasswordChanged = loginViewModel::onPasswordChange,
                 onRememberMeChanged = loginViewModel::onRememberMeChange,
-                onLoginClicked = { loginViewModel.onLoginClick {} },
-                navigateToSettings = {appState.navigateToPreferences()},
+                onLoginClicked = { appState.navigateToList() },
+                navigateToSettings = { appState.navigateToPreferences() },
             )
         }
         composable<Screen.EditList>(
             typeMap = mapOf(typeOf<PasswordInfo>() to parcelableType<PasswordInfo>())
         ) {
             val args = it.toRoute<Screen.EditList>()
-            EditList(
-                args,
-                navigateBack = {},
-                savePassword = { password -> Unit }
-            )
+            EditList(args, navigateBack = {}, savePassword = { password -> Unit })
         }
         composable<Screen.Preferences> {
             SettingsScreen(navController = appState.navController)
+        }
+        composable<Screen.List> {
+            ListScreen(
+                onAddClick = {},
+                listState = listState
+            ) { }
         }
     }
 }

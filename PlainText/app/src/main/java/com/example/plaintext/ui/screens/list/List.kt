@@ -68,20 +68,17 @@ fun AddButton(onClick: () -> Unit) {
 fun ListItemContent(
     modifier: Modifier, listState: ListViewState, navigateToEdit: (password: PasswordInfo) -> Unit
 ) {/*
-    Mock para testar o composable
     val mockPasswordList = listOf(
         PasswordInfo(
             id = 1, name = "Twitter", login = "dev", password = "123", notes = null
-        ),
-        PasswordInfo(
+        ), PasswordInfo(
             id = 2, name = "Facebook", login = "devtitans", password = "123", notes = null
-        ),
-        PasswordInfo(
+        ), PasswordInfo(
             id = 3, name = "Moodle", login = "dev.com", password = "123", notes = null
         )
     )
 
-    val mockListState = ListViewState(
+    val listState = ListViewState(
         passwordList = mockPasswordList, isCollected = true
     )
     */
