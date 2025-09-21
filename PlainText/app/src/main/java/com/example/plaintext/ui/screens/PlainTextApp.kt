@@ -12,6 +12,7 @@ import com.example.plaintext.ui.screens.hello.Hello_screen
 import com.example.plaintext.ui.screens.list.ListScreen
 import com.example.plaintext.ui.screens.login.Login_screen
 import com.example.plaintext.ui.screens.preferences.SettingsScreen
+import com.example.plaintext.ui.viewmodel.ListViewModel
 import com.example.plaintext.ui.viewmodel.LoginViewModel
 import com.example.plaintext.utils.parcelableType
 import kotlin.reflect.typeOf
@@ -23,8 +24,8 @@ fun PlainTextApp(
 ) {
     val loginViewModel: LoginViewModel = viewModel()
     val loginState by loginViewModel.loginState
-    //val listViewModel: ListViewModel = viewModel()
-    //val listState by listViewModel.listViewState
+    val listViewModel: ListViewModel = viewModel()
+    val listState by listViewModel.listViewState
 
     NavHost(
         navController = appState.navController,
@@ -56,7 +57,7 @@ fun PlainTextApp(
         composable<Screen.List> {
             ListScreen(
                 onAddClick = {},
-                //listState = listState
+                listState = listState
             ) { }
         }
     }

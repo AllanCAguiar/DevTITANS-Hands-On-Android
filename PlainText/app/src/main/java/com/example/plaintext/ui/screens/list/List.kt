@@ -34,8 +34,9 @@ import com.example.plaintext.ui.viewmodel.ListViewState
 
 @Composable
 fun ListScreen(
-    //listState: ListViewState,
-    onAddClick: () -> Unit, navigateToEdit: (password: PasswordInfo) -> Unit
+    listState: ListViewState,
+    onAddClick: () -> Unit,
+    navigateToEdit: (password: PasswordInfo) -> Unit
 ) {
     Scaffold(floatingActionButton = {
         AddButton(onClick = onAddClick)
@@ -45,7 +46,7 @@ fun ListScreen(
     }) { innerPadding ->
         ListItemContent(
             modifier = Modifier.padding(innerPadding),
-            //listState = listState,
+            listState = listState,
             navigateToEdit = navigateToEdit
         )
     }
@@ -65,11 +66,8 @@ fun AddButton(onClick: () -> Unit) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ListItemContent(
-    modifier: Modifier,
-    //listState: ListViewState,
-    navigateToEdit: (password: PasswordInfo) -> Unit
-) {
-
+    modifier: Modifier, listState: ListViewState, navigateToEdit: (password: PasswordInfo) -> Unit
+) {/*
     val mockPasswordList = listOf(
         PasswordInfo(
             id = 1, name = "Twitter", login = "dev", password = "123", notes = null
@@ -80,13 +78,13 @@ fun ListItemContent(
         )
     )
 
-    val mockListState = ListViewState(
+    val listState = ListViewState(
         passwordList = mockPasswordList, isCollected = true
     )
-
+    */
 
     when {
-        !mockListState.isCollected -> {
+        !listState.isCollected -> {
             LoadingScreen()
         }
 
@@ -94,9 +92,9 @@ fun ListItemContent(
             LazyColumn(
                 modifier = modifier.fillMaxSize()
             ) {
-                items(mockListState.passwordList.size) {
+                items(listState.passwordList.size) {
                     ListItem(
-                        mockListState.passwordList[it], navigateToEdit
+                        listState.passwordList[it], navigateToEdit
                     )
                 }
             }
