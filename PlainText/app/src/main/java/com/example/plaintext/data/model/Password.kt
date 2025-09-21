@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KProperty
 
 @Entity(tableName = "passwords")
 data class Password(
@@ -20,7 +21,7 @@ data class Password(
     val login: String,
 
     @ColumnInfo(name = "password_text")
-    val password_text: String,
+    val passwordText: String,
 
     @ColumnInfo(name = "notes")
     val notes: String? = null
@@ -38,5 +39,9 @@ data class PasswordInfo(
     operator fun getValue(nothing: Nothing?, property: KProperty<*>): Password =
         Password(
             id = id,
+            name = name,
+            login = login,
+            passwordText = password,
+            notes = notes,
         )
     }

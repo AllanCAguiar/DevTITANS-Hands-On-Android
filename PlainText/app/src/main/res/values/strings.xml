@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">PlainText</string>
-    <string name="login">"Login: "</string>
+    <string name="textLogin">"Login: "</string>
+    <string name="textUser">"Usuário"</string>
+    <string name="textPassword">"Senha"</string>
+    <string name="textNotes">"Notas"</string>
     <string name="buttonLogin">Enviar</string>
+    <string name="buttonSave">Salvar</string>
     <string name="checkboxSave">Salvar as informações de login</string>
     <string name="labelPassword">Senha</string>
     <string name="labelLogin">Login</string>
@@ -10,7 +14,10 @@
     <string name="textLogotype">\"The most secure password manager\" Bob and Alice</string>
     <string name="textSettings">Configuraçoes</string>
     <string name="textTitle">PlainText</string>
+    <string name="textName">Nome</string>
     <string name="textLoading">Carregando...</string>
+    <string name="textCreatePassword">Adicionar nova senha</string>
+    <string name="textEditPassword">Editar senha</string>
     <string name="textVersion">PlainText Password Manager v1.0</string>
     <string name="warningEmptyLogin">Insira um login</string>
 
